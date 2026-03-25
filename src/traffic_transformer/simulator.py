@@ -48,8 +48,13 @@ class RegionTrafficSimulator:
             departures = np.zeros((self.n, 2), dtype=np.float32)
 
             for i in range(self.n):
-                green_dir = int(action[i])
-                departures[i, green_dir] = min(queue[i, green_dir], self.service_rate)
+                # mapped from 0-3 Action Space
+                # 0: NS 10s, 1: NS 20s, 2: EW 10s, 3: EW 20s
+                a = action[i]
+                green_dir = 1 if a >= 2 else 0
+                duration_scale = 2.0 if a % 2 == 1 else 1.0
+                
+                departures[i, green_dir] = min(queue[i, green_dir], self.service_rate * duration_scale)
 
             queue -= departures
 
@@ -78,13 +83,20 @@ class RegionTrafficSimulator:
 
 def fixed_time_policy(queue: np.ndarray, t: int, cycle: int = 6) -> np.ndarray:
     phase = (t // cycle) % 2
-    return np.full((queue.shape[0],), phase, dtype=np.int64)
+    # Alternate between Action 1 (NS_20s) and Action 3 (EW_20s)
+    return np.full((queue.shape[0],), phase * 2 + 1, dtype=np.int64)
 
 
 def max_pressure_policy(queue: np.ndarray, _t: int) -> np.ndarray:
     ns_pressure = queue[:, 0]
     ew_pressure = queue[:, 1]
-    return (ew_pressure > ns_pressure).astype(np.int64)
+    
+    is_ew = (ew_pressure > ns_pressure).astype(np.int64)
+    # Dynamic duration based on pressure difference (diff > threshold implies need long green ~ 20s)
+    diff = np.abs(ns_pressure - ew_pressure)
+    is_long = (diff > 5.0).astype(np.int64)
+    
+    return is_ew * 2 + is_long
 
 
 def evaluate_policies(config: ProjectConfig, demand_episode: np.ndarray, model_policy: PolicyFn) -> Dict[str, SimulationResult]:

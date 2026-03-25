@@ -1,17 +1,17 @@
 {
   "fixed_time": {
-    "avg_queue": 5322.635326155026,
-    "cumulative_queue": 1277432.4782772064,
-    "throughput": 6958.44775390625
+    "avg_queue": 2219.0757344849903,
+    "cumulative_queue": 532578.1762763977,
+    "throughput": 13168.8720703125
   },
   "max_pressure": {
-    "avg_queue": 5016.674925783211,
-    "cumulative_queue": 1204001.9821879705,
-    "throughput": 7570.48486328125
+    "avg_queue": 2481.0868520066474,
+    "cumulative_queue": 595460.8444815953,
+    "throughput": 12639.626953125
   },
   "transformer": {
-    "avg_queue": 5016.688685317834,
-    "cumulative_queue": 1204005.2844762802,
-    "throughput": 7570.3017578125
+    "avg_queue": 2524.3257392133605,
+    "cumulative_queue": 605838.1774112065,
+    "throughput": 12573.498046875
   }
 }

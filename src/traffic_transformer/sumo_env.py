@@ -105,12 +105,19 @@ class SumoTrafficSimulator:
                 # Get Action from Policy
                 action = policy(queue_state, t)
                 
-                # Handle Phase switches (Yellow Logic)
+                # Handle Phase and Duration
                 target_phases = []
+                durations = []
                 need_yellow = False
                 for i, tls in enumerate(self.tls_ids):
-                    target = self.ns_phase if action[i] == 0 else self.ew_phase
+                    a = action[i]
+                    is_ew = a >= 2
+                    is_long = a % 2 == 1
+                    
+                    target = self.ew_phase if is_ew else self.ns_phase
                     target_phases.append(target)
+                    durations.append(20 if is_long else 10)
+                    
                     current = traci.trafficlight.getPhase(tls)
                     if current != target and current not in [1, 3]:
                         traci.trafficlight.setPhase(tls, current + 1) # Set Yellow
@@ -125,8 +132,12 @@ class SumoTrafficSimulator:
                 for i, tls in enumerate(self.tls_ids):
                     traci.trafficlight.setPhase(tls, target_phases[i])
                 
-                # Run the rest of the green step (e.g. 7 seconds)
-                green_duration = self.step_length - (self.yellow_duration if need_yellow else 0)
+                # Global step follows the maximum requested valid duration to keep history synchronous
+                cycle_duration = max(durations)
+                green_duration = cycle_duration - (self.yellow_duration if need_yellow else 0)
+                if green_duration < 1:
+                    green_duration = 1
+                    
                 for _ in range(green_duration):
                     traci.simulationStep()
                     

@@ -35,8 +35,10 @@ def _rollout_expert(config: ProjectConfig, demand: np.ndarray) -> Tuple[np.ndarr
 
         departures = np.zeros((n, 2), dtype=np.float32)
         for i in range(n):
-            green = int(action[i])
-            departures[i, green] = min(queue[i, green], config.service_rate)
+            a = action[i]
+            green_dir = 1 if a >= 2 else 0
+            duration_scale = 2.0 if a % 2 == 1 else 1.0
+            departures[i, green_dir] = min(queue[i, green_dir], config.service_rate * duration_scale)
 
         queue -= departures
 
@@ -126,7 +128,7 @@ def train_transformer(
             batch_y = batch_y.to(device)
 
             logits = model(batch_x)
-            loss = F.cross_entropy(logits.reshape(-1, 2), batch_y.reshape(-1))
+            loss = F.cross_entropy(logits.reshape(-1, 4), batch_y.reshape(-1))
 
             optimizer.zero_grad()
             loss.backward()
@@ -147,7 +149,7 @@ def train_transformer(
                 batch_y = batch_y.to(device)
 
                 logits = model(batch_x)
-                loss = F.cross_entropy(logits.reshape(-1, 2), batch_y.reshape(-1))
+                loss = F.cross_entropy(logits.reshape(-1, 4), batch_y.reshape(-1))
                 val_loss += float(loss.item())
 
                 pred = logits.argmax(dim=-1)

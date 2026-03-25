@@ -34,7 +34,7 @@ class TransformerPolicy(nn.Module):
         self.head = nn.Sequential(
             nn.Linear(d_model, d_model),
             nn.ReLU(),
-            nn.Linear(d_model, 2),
+            nn.Linear(d_model, 4), # 4 classes: [NS_10s, NS_20s, EW_10s, EW_20s]
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
