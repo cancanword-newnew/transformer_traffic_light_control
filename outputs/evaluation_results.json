@@ -1,0 +1,17 @@
+{
+  "fixed_time": {
+    "avg_queue": 5322.635326155026,
+    "cumulative_queue": 1277432.4782772064,
+    "throughput": 6958.44775390625
+  },
+  "max_pressure": {
+    "avg_queue": 5016.674925783211,
+    "cumulative_queue": 1204001.9821879705,
+    "throughput": 7570.48486328125
+  },
+  "transformer": {
+    "avg_queue": 5016.688685317834,
+    "cumulative_queue": 1204005.2844762802,
+    "throughput": 7570.3017578125
+  }
+}
