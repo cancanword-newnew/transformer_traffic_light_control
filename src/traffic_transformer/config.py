@@ -23,9 +23,9 @@ class ProjectConfig:
     test_episodes: int = 30
 
     batch_size: int = 64
-    epochs: int = 10
-    learning_rate: float = 1e-3
-    weight_decay: float = 1e-4
+    epochs: int = 15
+    learning_rate: float = 3e-4
+    weight_decay: float = 0.0
 
     d_model: int = 96
     nhead: int = 8

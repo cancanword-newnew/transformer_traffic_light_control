@@ -10,8 +10,8 @@
     "throughput": 12639.626953125
   },
   "transformer": {
-    "avg_queue": 2524.3257392133605,
-    "cumulative_queue": 605838.1774112065,
-    "throughput": 12573.498046875
+    "avg_queue": 4368.139581365585,
+    "cumulative_queue": 1048353.4995277405,
+    "throughput": 8768.3291015625
   }
 }

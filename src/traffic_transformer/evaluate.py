@@ -35,7 +35,7 @@ class TransformerPolicyRunner:
         x = torch.from_numpy(window[None].astype(np.float32)).to(self.device)
 
         with torch.no_grad():
-            logits = self.model(x)
+            logits, _ = self.model(x)
             action = logits.argmax(dim=-1).squeeze(0).cpu().numpy()
         return action.astype(np.int64)
 

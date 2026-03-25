@@ -4,6 +4,8 @@ import torch
 import torch.nn as nn
 
 
+from typing import Tuple
+
 class TransformerPolicy(nn.Module):
     def __init__(
         self,
@@ -31,13 +33,22 @@ class TransformerPolicy(nn.Module):
             dim_feedforward=d_model * 4,
         )
         self.encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
-        self.head = nn.Sequential(
+        
+        # PPO Actor Head
+        self.actor = nn.Sequential(
             nn.Linear(d_model, d_model),
             nn.ReLU(),
             nn.Linear(d_model, 4), # 4 classes: [NS_10s, NS_20s, EW_10s, EW_20s]
         )
+        
+        # PPO Critic Head (State Value)
+        self.critic = nn.Sequential(
+            nn.Linear(d_model, d_model),
+            nn.ReLU(),
+            nn.Linear(d_model, 1),
+        )
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
         batch, steps, nodes, _ = x.shape
 
         tokens = self.input_proj(x)
@@ -53,5 +64,11 @@ class TransformerPolicy(nn.Module):
 
         encoded = encoded.reshape(batch, steps, nodes, -1)
         last_step = encoded[:, -1]
-        logits = self.head(last_step)
-        return logits
+        
+        logits = self.actor(last_step)
+        
+        # Pool across nodes to get a single graph-level state value
+        graph_feature = last_step.mean(dim=1)
+        value = self.critic(graph_feature)
+        
+        return logits, value
