@@ -1,0 +1,16 @@
+<routes>
+    <vType id="car" length="5.0" maxSpeed="15.0" accel="2.6" decel="4.5" />
+    
+    <!-- Real Routes for A0, A1, B0, B1 -->
+    <route id="route_ns_0" edges="bottom0A0 A0A1 A1top0" />
+    <route id="route_ew_0" edges="left0A0 A0B0 B0right0" />
+    
+    <route id="route_ns_1" edges="bottom0A0 A0A1 A1top0" />
+    <route id="route_ew_1" edges="left1A1 A1B1 B1right1" />
+
+    <route id="route_ns_2" edges="bottom1B0 B0B1 B1top1" />
+    <route id="route_ew_2" edges="left0A0 A0B0 B0right0" />
+    
+    <route id="route_ns_3" edges="bottom1B0 B0B1 B1top1" />
+    <route id="route_ew_3" edges="left1A1 A1B1 B1right1" />
+</routes>
